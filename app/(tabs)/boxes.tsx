@@ -6,6 +6,7 @@ import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { useEffect, useState } from 'react';
 import * as SecureStore from 'expo-secure-store';
+import Box from '@/components/box';
 
 const apiURL = 'https://ewnscan.hexato.io';
 
@@ -81,17 +82,9 @@ export default function Boxes() {
       </ThemedView>
       <ThemedView style={styles.stepContainer}>
         {
-          walletBoxes?.map((box) => (
-            <ThemedView key={box.box_id}>
-              <ThemedText>
-                Box ID: {box.box_id}
-              </ThemedText>
-              <ThemedText>
-                Rewards: {box.rewards}
-              </ThemedText>
-              <ThemedText>
-                Guesses: {box.guesses}
-              </ThemedText>
+          walletBoxes?.map((box, index) => (
+            <ThemedView key={index}>
+              <Box {...box} />
             </ThemedView>
           ))
         }

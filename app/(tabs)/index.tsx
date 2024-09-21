@@ -1,4 +1,4 @@
-import { Image, StyleSheet, Platform, TextInput, Button, Text } from 'react-native';
+import { Image, StyleSheet, Platform, TextInput, Button, Text, useColorScheme } from 'react-native';
 
 import { HelloWave } from '@/components/HelloWave';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
@@ -6,11 +6,12 @@ import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import * as SecureStore from 'expo-secure-store';
 import { useEffect, useState } from 'react';
+import { View } from 'react-native';
+import { FontAwesome } from '@expo/vector-icons';
 
 const apiURL = 'https://ewnscan.hexato.io';
 
-export default function HomeScreen() {
-const [walletStats, setWalletStats] = useState<WalletStats | null>(null);interface WalletStats {
+interface WalletStats {
   guess_count: number;
   open_count: number;
   burn_count: number;
@@ -18,35 +19,84 @@ const [walletStats, setWalletStats] = useState<WalletStats | null>(null);interfa
   tokens_earned: number;
 }
 
-const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
+export default function HomeScreen() {
+  const [walletStats, setWalletStats] = useState<WalletStats | null>(null);
+  const themeColor = useColorScheme();
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
+  async function getWalletStats() {
+    const walletId = await SecureStore.getItemAsync('walletID');
+    if (!walletId) {
+      return;
+    }
+    const response = await fetch(`${apiURL}/wallet/${walletId}`);
+    const data = await response.json();
 
-async function getWalletStats() {
-  const walletId = await SecureStore.getItemAsync('walletID');
-  if (!walletId) {
-    return;
+    setWalletStats(data);
+    setLastUpdated(new Date());
   }
-  const response = await fetch(`${apiURL}/wallet/${walletId}`);
-  const data = await response.json();
 
-  setWalletStats(data);
-  setLastUpdated(new Date());
-}
-
-useEffect(() => {
-
+  useEffect(() => {
     getWalletStats();
     setLastUpdated(new Date());
 
-    //every 30 seconds get the wallet stats
+    // every 30 seconds get the wallet stats
     const interval = setInterval(() => {
       getWalletStats();
     }, 5000);
 
     return () => clearInterval(interval);
-    
   }, []);
 
+  const stats = [
+    { label: 'Guesses', value: walletStats?.guess_count, icon: 'question-circle-o' },
+    { label: 'Opens', value: walletStats?.open_count, icon: 'folder-open' },
+    { label: 'Burns', value: walletStats?.burn_count, icon: 'fire' },
+    { label: 'Contributions', value: walletStats?.contribution_count, icon: 'envelope-o' },
+    { label: 'Tokens Earned', value: walletStats?.tokens_earned?.toFixed(4), icon: 'money' },
+  ];
+
+  const styles = StyleSheet.create({
+    titleContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 8,
+    },
+    stepContainer: {
+      gap: 8,
+      marginBottom: 8,
+    },
+    reactLogo: {
+      height: 200,
+      width: "100%",
+      bottom: 0,
+      left: 0,
+      position: 'absolute',
+    },
+    statsContainer: {
+      gap: 8,
+    },
+    grid: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      justifyContent: 'space-between',
+    },
+    gridItem: {
+      width: '48%', // Adjust the width to fit two items per row
+      marginBottom: 8,
+      padding: 16,
+    },
+    statLabel: {
+      fontSize: 20,
+    },
+    statValue: {
+      fontSize: 25,
+      fontWeight: 'bold',
+    },
+    icon: {
+      marginBottom: 4,
+    },
+  });
 
   return (
     <ParallaxScrollView
@@ -57,55 +107,24 @@ useEffect(() => {
           style={styles.reactLogo}
         />
       }>
-            <ThemedView style={styles.titleContainer}>
-
+      <ThemedView style={styles.titleContainer}>
         <ThemedText type="title">Wallet Stats</ThemedText>
       </ThemedView>
       <ThemedView style={styles.stepContainer}>
-        <ThemedText>Last Updated: 
-          {lastUpdated?.toLocaleTimeString()}
-        </ThemedText>
-        
+        <ThemedText>Last Updated: {lastUpdated?.toLocaleTimeString()}</ThemedText>
       </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText>
-          Guesses: {walletStats?.guess_count}
-        </ThemedText>
-        <ThemedText>
-          Opens: {walletStats?.open_count}
-        </ThemedText>
-        <ThemedText>
-          Burns: {walletStats?.burn_count}
-        </ThemedText>
-        <ThemedText>
-          Contributions: {walletStats?.contribution_count}
-        </ThemedText>
-        <ThemedText>
-          Tokens Earned: {
-          //round to 4 decimal places
-          walletStats?.tokens_earned.toFixed(4)
-          }
-        </ThemedText>
+      <ThemedView style={styles.statsContainer}>
+        <View style={styles.grid}>
+          {stats.map((stat, index) => (
+
+            <View key={index} style={stat.label === 'Tokens Earned' ? { ...styles.gridItem, width: '100%' } : styles.gridItem}>
+              <FontAwesome style={styles.icon} name={stat.icon} size={24} color={themeColor === 'dark' ? '#fff' : '#333'} />
+              <ThemedText style={styles.statLabel}>{stat.label}:</ThemedText>
+              <ThemedText style={styles.statValue}>{stat.value}</ThemedText>
+            </View>
+          ))}
+        </View>
       </ThemedView>
     </ParallaxScrollView>
   );
 }
-
-const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  reactLogo: {
-    height: 200,
-    width: "100%",
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
-  },
-});
