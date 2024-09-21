@@ -1,13 +1,11 @@
-import { Image, StyleSheet, Platform, TextInput, Button, Text, useColorScheme } from 'react-native';
-
-import { HelloWave } from '@/components/HelloWave';
+import { Image, StyleSheet, useColorScheme } from 'react-native';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
-import * as SecureStore from 'expo-secure-store';
 import { useEffect, useState } from 'react';
 import { View } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
+import getWalletStats from '@/hooks/getWalletStats';
 
 const apiURL = 'https://ewnscan.hexato.io';
 
@@ -24,25 +22,21 @@ export default function HomeScreen() {
   const themeColor = useColorScheme();
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
-  async function getWalletStats() {
-    const walletId = await SecureStore.getItemAsync('walletID');
-    if (!walletId) {
-      return;
-    }
-    const response = await fetch(`${apiURL}/wallet/${walletId}`);
-    const data = await response.json();
-
-    setWalletStats(data);
-    setLastUpdated(new Date());
-  }
 
   useEffect(() => {
-    getWalletStats();
+    getWalletStats().then((data) => {
+      setWalletStats(data);
+    
     setLastUpdated(new Date());
+    });
 
     // every 30 seconds get the wallet stats
     const interval = setInterval(() => {
-      getWalletStats();
+      getWalletStats().then((data) => {
+        setWalletStats(data);
+      
+      setLastUpdated(new Date());
+      });
     }, 5000);
 
     return () => clearInterval(interval);
@@ -57,7 +51,6 @@ export default function HomeScreen() {
   ];
 
   const styles = StyleSheet.create({
-
     stepContainer: {
       marginBottom: 8,
     },

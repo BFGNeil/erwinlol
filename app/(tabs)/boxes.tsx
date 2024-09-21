@@ -7,20 +7,12 @@ import { ThemedView } from '@/components/ThemedView';
 import { useEffect, useState } from 'react';
 import * as SecureStore from 'expo-secure-store';
 import Box from '@/components/box';
-
-const apiURL = 'https://ewnscan.hexato.io';
-
-
-async function saveWalletID(walletID: string) {
-  await SecureStore.setItemAsync('walletID', walletID);
-}
-
+import getWalletBoxes from '@/hooks/getWalletBoxes';
 
 export default function Boxes() {
 
   const [walletBoxes, setWalletBoxes] = useState<WalletBox | null>(null);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
-
   interface WalletBox {
     total: number;
     boxes: {
@@ -31,45 +23,23 @@ export default function Boxes() {
   }
 
   useEffect(() => {
-      getWalletBoxes();
+      getWalletBoxes().then((data) => {
+        setWalletBoxes(data);
+        setLastUpdated(new Date());
+      });
   
       //every 30 seconds get the wallet stats
       const interval = setInterval(() => {
-        getWalletBoxes();
-      }, 5000);
+        getWalletBoxes().then((data) => {
+          setWalletBoxes(data);
+          setLastUpdated(new Date());
+        });
+      }, 10000);
   
       return () => clearInterval(interval);
       
     
   }, []);
-  
-
-  async function getWalletBoxes() {
-    const walletId = await SecureStore.getItemAsync('walletID');
-    if (!walletId) {
-      return;
-    }
-    const response = await fetch(`${apiURL}/wallet/${walletId}/boxes`);
-    const data = await response.json();
-
-    const walletBoxes = {
-      total: data.total,
-      boxes: data.boxes.map((box: any) => {
-        return {
-          box_id: box.box_id,
-          rewards: box.rewards,
-          guesses: box.guesses,
-        };
-      }
-    }
-
-    setWalletBoxes(walletBoxes);
-    setLastUpdated(new Date());
-
-
-
-  
-  }
 
   return (
     <ParallaxScrollView
