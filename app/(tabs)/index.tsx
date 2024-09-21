@@ -57,13 +57,8 @@ export default function HomeScreen() {
   ];
 
   const styles = StyleSheet.create({
-    titleContainer: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      gap: 8,
-    },
+
     stepContainer: {
-      gap: 8,
       marginBottom: 8,
     },
     reactLogo: {
@@ -82,9 +77,11 @@ export default function HomeScreen() {
       justifyContent: 'space-between',
     },
     gridItem: {
-      width: '48%', // Adjust the width to fit two items per row
+      width: '49%', // Adjust the width to fit two items per row
       marginBottom: 8,
       padding: 16,
+      borderRadius: 8,
+      backgroundColor: themeColor === 'dark' ? '#333' : '#fff',
     },
     statLabel: {
       fontSize: 20,
@@ -107,20 +104,18 @@ export default function HomeScreen() {
           style={styles.reactLogo}
         />
       }>
-      <ThemedView style={styles.titleContainer}>
+      <ThemedView >
         <ThemedText type="title">Wallet Stats</ThemedText>
+        <ThemedText >Last Updated: {lastUpdated?.toLocaleTimeString()}</ThemedText>
       </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText>Last Updated: {lastUpdated?.toLocaleTimeString()}</ThemedText>
-      </ThemedView>
+
       <ThemedView style={styles.statsContainer}>
         <View style={styles.grid}>
           {stats.map((stat, index) => (
-
             <View key={index} style={stat.label === 'Tokens Earned' ? { ...styles.gridItem, width: '100%' } : styles.gridItem}>
               <FontAwesome style={styles.icon} name={stat.icon} size={24} color={themeColor === 'dark' ? '#fff' : '#333'} />
-              <ThemedText style={styles.statLabel}>{stat.label}:</ThemedText>
-              <ThemedText style={styles.statValue}>{stat.value}</ThemedText>
+              <ThemedText >{stat.label}:</ThemedText>
+              <ThemedText type="defaultSemiBold">{stat.value}</ThemedText>
             </View>
           ))}
         </View>

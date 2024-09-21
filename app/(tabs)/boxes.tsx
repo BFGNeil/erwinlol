@@ -72,13 +72,9 @@ export default function Boxes() {
         style={styles.reactLogo}
       />
     }>
-      <ThemedView style={styles.titleContainer}>
+      <ThemedView >
         <ThemedText type="title">Recent Boxes</ThemedText>
-        </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText>Last Updated: 
-          {lastUpdated?.toLocaleTimeString()}
-        </ThemedText>
+        <ThemedText >Last Updated: {lastUpdated?.toLocaleTimeString()}</ThemedText>
       </ThemedView>
       <ThemedView style={styles.stepContainer}>
         {
@@ -99,10 +95,6 @@ const styles = StyleSheet.create({
     bottom: -90,
     left: -35,
     position: 'absolute',
-  },
-  titleContainer: {
-    flexDirection: 'row',
-    gap: 8,
   },
   stepContainer: {
     gap: 8,

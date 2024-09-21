@@ -37,7 +37,7 @@ export default function Settings() {
         <ThemedText type="title">Settings</ThemedText>
         </ThemedView>
         <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Wallet ID</ThemedText>
+        <ThemedText type="subtitle">Wallet</ThemedText>
         <TextInput
           style={{ height: 40, borderColor: 'gray', borderWidth: 1, color: 'white' }}
           onChangeText={setWalletID}
