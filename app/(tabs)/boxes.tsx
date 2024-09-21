@@ -18,10 +18,11 @@ async function saveWalletID(walletID: string) {
 
 export default function Boxes() {
 
-  const [walletBoxes, setWalletBoxes] = useState<WalletBox[] | null>(null);
+  const [walletBoxes, setWalletBoxes] = useState<WalletBox | null>(null);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
   interface WalletBox {
+    total: number;
     boxes: {
       box_id: number;
       rewards: number;
@@ -50,16 +51,23 @@ export default function Boxes() {
     }
     const response = await fetch(`${apiURL}/wallet/${walletId}/boxes`);
     const data = await response.json();
-  
-  
-    const formattedData = data.map((box: any) => ({
-      box_id: box.box_id,
-      rewards: box.rewards,
-      guesses: box.guesses,
-    }));
-  
-    setWalletBoxes(formattedData);
+
+    const walletBoxes = {
+      total: data.total,
+      boxes: data.boxes.map((box: any) => {
+        return {
+          box_id: box.box_id,
+          rewards: box.rewards,
+          guesses: box.guesses,
+        };
+      }
+    }
+
+    setWalletBoxes(walletBoxes);
     setLastUpdated(new Date());
+
+
+
   
   }
 
@@ -78,7 +86,7 @@ export default function Boxes() {
       </ThemedView>
       <ThemedView style={styles.stepContainer}>
         {
-          walletBoxes?.map((box, index) => (
+          walletBoxes?.boxes.map((box, index) => (
             <ThemedView key={index}>
               <Box {...box} />
             </ThemedView>
