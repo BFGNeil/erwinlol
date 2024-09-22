@@ -5,23 +5,16 @@ import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { useEffect, useState } from 'react';
 import * as SecureStore from 'expo-secure-store';
-
-const apiURL = 'https://ewnscan.hexato.io';
+import saveWallet from '@/hooks/saveWallet';
 
 export default function Settings() {
 
-    const [walletID, setWalletID] = useState<string | undefined>(undefined);
-
-    async function saveWalletID() {
-        await SecureStore.setItemAsync('walletID', walletID || '');
-      }
-
+  const [walletID, setWalletID] = useState<string | undefined>(undefined);
+  
   useEffect(() => {
     SecureStore.getItemAsync('walletID').then((walletID) => {
       setWalletID(walletID || undefined);
     });
-      
-    
   }, []);
   
   return (
@@ -47,11 +40,9 @@ export default function Settings() {
         <Button
           title="Save Wallet ID"
           onPress={() => {
-            saveWalletID();
+            saveWallet(walletID);
           }}
         />
-
-
       </ThemedView>
     </ParallaxScrollView>
   );

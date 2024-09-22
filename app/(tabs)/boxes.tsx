@@ -1,16 +1,14 @@
-import Ionicons from '@expo/vector-icons/Ionicons';
-import { StyleSheet, Image, Platform, Button, TextInput } from 'react-native';
+import Ionicons from "@expo/vector-icons/Ionicons";
+import { StyleSheet, Image, Platform, Button, TextInput } from "react-native";
 
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
-import { useEffect, useState } from 'react';
-import * as SecureStore from 'expo-secure-store';
-import Box from '@/components/box';
-import getWalletBoxes from '@/hooks/getWalletBoxes';
+import ParallaxScrollView from "@/components/ParallaxScrollView";
+import { ThemedText } from "@/components/ThemedText";
+import { ThemedView } from "@/components/ThemedView";
+import { useEffect, useState } from "react";
+import Box from "@/components/box";
+import getWalletBoxes from "@/hooks/getWalletBoxes";
 
 export default function Boxes() {
-
   const [walletBoxes, setWalletBoxes] = useState<WalletBox | null>(null);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   interface WalletBox {
@@ -19,49 +17,54 @@ export default function Boxes() {
       box_id: number;
       rewards: number;
       guesses: number;
+      is_burned: boolean;
+      opened_at: string;
+      opener_wallet: string;
+      spawned_at: string;
+      state: boolean;
+      sate_str: string;
     }[];
   }
 
   useEffect(() => {
+    getWalletBoxes().then((data) => {
+      setWalletBoxes(data);
+      setLastUpdated(new Date());
+    });
+
+    //every 30 seconds get the wallet stats
+    const interval = setInterval(() => {
       getWalletBoxes().then((data) => {
         setWalletBoxes(data);
         setLastUpdated(new Date());
       });
-  
-      //every 30 seconds get the wallet stats
-      const interval = setInterval(() => {
-        getWalletBoxes().then((data) => {
-          setWalletBoxes(data);
-          setLastUpdated(new Date());
-        });
-      }, 10000);
-  
-      return () => clearInterval(interval);
-      
-    
+    }, 10000);
+
+    return () => clearInterval(interval);
   }, []);
 
   return (
     <ParallaxScrollView
-    headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-    headerImage={
-      <Image
-        source={require('@/assets/images/cat-in-box.jpg')}
-        style={styles.reactLogo}
-      />
-    }>
-      <ThemedView >
+      headerBackgroundColor={{ light: "#A1CEDC", dark: "#1D3D47" }}
+      headerImage={
+        <Image
+          source={require("@/assets/images/cat-in-box.jpg")}
+          style={styles.reactLogo}
+        />
+      }
+    >
+      <ThemedView>
         <ThemedText type="title">Recent Boxes</ThemedText>
-        <ThemedText >Last Updated: {lastUpdated?.toLocaleTimeString()}</ThemedText>
+        <ThemedText>
+          Last Updated: {lastUpdated?.toLocaleTimeString()}
+        </ThemedText>
       </ThemedView>
       <ThemedView style={styles.stepContainer}>
-        {
-          walletBoxes?.boxes.map((box, index) => (
-            <ThemedView key={index}>
-              <Box {...box} />
-            </ThemedView>
-          ))
-        }
+        {walletBoxes?.boxes.map((box, index) => (
+          <ThemedView key={index}>
+            <Box {...box} />
+          </ThemedView>
+        ))}
       </ThemedView>
     </ParallaxScrollView>
   );
@@ -69,10 +72,10 @@ export default function Boxes() {
 
 const styles = StyleSheet.create({
   headerImage: {
-    color: '#808080',
+    color: "#808080",
     bottom: -90,
     left: -35,
-    position: 'absolute',
+    position: "absolute",
   },
   stepContainer: {
     gap: 8,
@@ -83,6 +86,6 @@ const styles = StyleSheet.create({
     width: "100%",
     bottom: 0,
     left: 0,
-    position: 'absolute',
+    position: "absolute",
   },
 });

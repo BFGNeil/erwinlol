@@ -16,11 +16,16 @@ export default async function getWalletBoxes() {
           box_id: box.box_id,
           rewards: box.rewards,
           guesses: box.guesses,
+          is_burned: box.is_burned,
+          opened_at: box.opened_at,
+          opener_wallet: box.opener_wallet,
+          spawned_at: box.spawned_at,
+          state: box.state,
+          sate_str: box.state_str,
         };
       }
       )
     };
 
     return walletBoxes;
-  
   }
