@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Text, StyleSheet, useColorScheme, View } from "react-native";
 import { ThemedText } from "./ThemedText";
 import getLeaderboard from "@/hooks/getLeaderboard";
+import TrimmedText from "./trimmedText";
 
 export default function Leaderboard() {
   const themeColor = useColorScheme();
@@ -54,8 +55,14 @@ export default function Leaderboard() {
         {rankings &&
           rankings.map((ranking, index) => (
             <View style={styles.gridLeaderboardItem} key={index}>
+              {index === 0 && <ThemedText>🥇</ThemedText>}
+              {index === 1 && <ThemedText>🥈</ThemedText>}
+              {index === 2 && <ThemedText>🥉</ThemedText>}
               <ThemedText>Rank: {index + 1}</ThemedText>
-              <ThemedText>Wallet ID: {ranking.wallet_id}</ThemedText>
+              <TrimmedText
+                text={"Wallet: " + ranking.wallet_id}
+                maxLength={35}
+              />
               <ThemedText>Guesses: {ranking.guess_count}</ThemedText>
               <ThemedText>Boxes Opened: {ranking.open_count}</ThemedText>
               <ThemedText>Boxes Burned: {ranking.burn_count}</ThemedText>
