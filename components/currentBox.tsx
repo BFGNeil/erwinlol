@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { ThemedText } from "./ThemedText";
 import { useColorScheme } from "react-native";
+import { FontAwesome6 } from "@expo/vector-icons";
+import TrimmedText from "./trimmedText";
 
 export default function CurrentBox() {
   const [currentBox, setCurrentBox] = useState<CurrentBoxType | null>(null);
@@ -41,12 +43,16 @@ export default function CurrentBox() {
       shadowOpacity: 0.1,
       shadowRadius: 5,
       elevation: 3,
+      //row
+      flexDirection: "row",
     },
     boxId: {
       fontSize: 17,
       fontWeight: "bold",
       marginBottom: 10,
       color: themeColor === "dark" ? "#fff" : "#333",
+      //text is overflowing, so we need to wrap it
+      flexWrap: "wrap",
     },
     rewards: {
       fontSize: 16,
@@ -59,21 +65,34 @@ export default function CurrentBox() {
     },
   });
 
-  const formattedDate = new Date(currentBox?.opened_at).toLocaleString();
+  const formattedDate = new Date(currentBox?.spawned_at).toLocaleString();
+
+  //time since spawned, in hours and minutes, human readable
+  const [timeSinceSpawned, setTimeSinceSpawned] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (currentBox) {
+      const timeSince =
+        new Date().getTime() - new Date(currentBox.spawned_at).getTime();
+      const hours = Math.floor(timeSince / 1000 / 60 / 60);
+      const minutes = Math.floor((timeSince / 1000 / 60) % 60);
+      setTimeSinceSpawned(`${hours} hours, ${minutes} minutes`);
+    }
+  }, [currentBox]);
 
   return (
     <View style={styles.boxContainer}>
-      <ThemedText style={styles.boxId}>{currentBox?.box_id}</ThemedText>
-      <ThemedText>Spawned At: {currentBox?.spawned_at}</ThemedText>
-      <ThemedText>Decay Number: {currentBox?.decay_number}</ThemedText>
-      <ThemedText>Opener Wallet: {currentBox?.opener_wallet}</ThemedText>
-      <ThemedText>Is Burned: {currentBox?.is_burned ? "Yes" : "No"}</ThemedText>
-      <ThemedText>Contents: {currentBox?.contents}</ThemedText>
-      <ThemedText>Password: {currentBox?.password}</ThemedText>
-      <ThemedText>
-        Contributors: {currentBox?.contributors.join(", ")}
-      </ThemedText>
-      <ThemedText>Events: {currentBox?.events.join(", ")}</ThemedText>
+      <FontAwesome6
+        name="box"
+        size={48}
+        color={themeColor === "dark" ? "#fff" : "#333"}
+        style={{ marginRight: 20 }}
+      />
+      <View>
+        <TrimmedText text={currentBox?.box_id || ""} maxLength={30} />
+        <ThemedText>Spawned At: {formattedDate}</ThemedText>
+        <ThemedText>Time since spawn: {timeSinceSpawned}</ThemedText>
+      </View>
     </View>
   );
 }

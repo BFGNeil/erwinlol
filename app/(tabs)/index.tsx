@@ -4,7 +4,7 @@ import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { useEffect, useState } from "react";
 import { View } from "react-native";
-import { FontAwesome } from "@expo/vector-icons";
+import { FontAwesome, FontAwesome6 } from "@expo/vector-icons";
 import getWalletStats from "@/hooks/getWalletStats";
 import Leaderboard from "@/components/Leaderboard";
 import CurrentBox from "@/components/currentBox";
@@ -47,23 +47,24 @@ export default function HomeScreen() {
     {
       label: "Guesses",
       value: walletStats?.guess_count,
-      icon: "question-circle-o",
+      icon: "key",
+    },
+    {
+      label: "Box Contributions",
+      value: walletStats?.contribution_count,
+      icon: "bars-progress",
     },
     {
       label: "Boxes Opened",
       value: walletStats?.open_count,
-      icon: "folder-open",
+      icon: "box-open",
     },
     { label: "Boxes Burned", value: walletStats?.burn_count, icon: "fire" },
-    {
-      label: "Box Contributions",
-      value: walletStats?.contribution_count,
-      icon: "envelope-o",
-    },
+
     {
       label: "Tokens Earned",
       value: walletStats?.tokens_earned?.toFixed(4),
-      icon: "money",
+      icon: "coins",
     },
   ];
 
@@ -92,6 +93,15 @@ export default function HomeScreen() {
       padding: 16,
       borderRadius: 8,
       backgroundColor: themeColor === "dark" ? "#333" : "#fff",
+    },
+    gridItemFull: {
+      width: "100%",
+      marginBottom: 8,
+      padding: 16,
+      borderRadius: 8,
+      backgroundColor: themeColor === "dark" ? "#333" : "#fff",
+      //row
+      flexDirection: "row",
     },
     statLabel: {
       fontSize: 20,
@@ -129,18 +139,28 @@ export default function HomeScreen() {
               key={index}
               style={
                 stat.label === "Tokens Earned"
-                  ? { ...styles.gridItem, width: "100%" }
+                  ? { ...styles.gridItemFull }
                   : styles.gridItem
               }
             >
-              <FontAwesome
+              <FontAwesome6
                 style={styles.icon}
                 name={stat.icon}
-                size={24}
+                size={48}
                 color={themeColor === "dark" ? "#fff" : "#333"}
               />
-              <ThemedText style={{ marginBottom: 8 }}>{stat.label}:</ThemedText>
-              <ThemedText type="defaultSemiBold">{stat.value}</ThemedText>
+              <View
+                style={
+                  stat.label === "Tokens Earned"
+                    ? { flex: 1, marginLeft: 8 }
+                    : {}
+                }
+              >
+                <ThemedText style={{ marginBottom: 8 }}>
+                  {stat.label}
+                </ThemedText>
+                <ThemedText type="defaultSemiBold">{stat.value}</ThemedText>
+              </View>
             </View>
           ))}
         </View>
