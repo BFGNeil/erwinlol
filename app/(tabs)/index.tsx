@@ -152,7 +152,7 @@ export default function HomeScreen() {
               <View
                 style={
                   stat.label === "Tokens Earned"
-                    ? { flex: 1, marginLeft: 8 }
+                    ? { flex: 1, marginLeft: 16 }
                     : {}
                 }
               >

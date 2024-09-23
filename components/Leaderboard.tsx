@@ -22,6 +22,15 @@ export default function Leaderboard() {
     getLeaderboard().then((data) => {
       setRankings(data);
     });
+
+    // every 30 seconds get the leaderboard
+    const interval = setInterval(() => {
+      getLeaderboard().then((data) => {
+        setRankings(data);
+      });
+    }, 30000);
+
+    return () => clearInterval(interval);
   }, []);
 
   const styles = StyleSheet.create({

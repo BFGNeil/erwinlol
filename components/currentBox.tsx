@@ -29,6 +29,15 @@ export default function CurrentBox() {
     getCurrentBox().then((data) => {
       setCurrentBox(data);
     });
+
+    // every 30 seconds get the current box
+    const interval = setInterval(() => {
+      getCurrentBox().then((data) => {
+        setCurrentBox(data);
+      });
+    }, 30000);
+
+    return () => clearInterval(interval);
   }, []);
 
   const styles = StyleSheet.create({
@@ -83,15 +92,14 @@ export default function CurrentBox() {
   return (
     <View style={styles.boxContainer}>
       <FontAwesome6
-        name="box"
-        size={48}
+        name="box-open"
+        size={64}
         color={themeColor === "dark" ? "#fff" : "#333"}
-        style={{ marginRight: 20 }}
       />
-      <View>
+      <View style={{ marginLeft: 10 }}>
         <TrimmedText text={currentBox?.box_id || ""} maxLength={30} />
         <ThemedText>Spawned At: {formattedDate}</ThemedText>
-        <ThemedText>Time since spawn: {timeSinceSpawned}</ThemedText>
+        <ThemedText>Since spawn: {timeSinceSpawned}</ThemedText>
       </View>
     </View>
   );

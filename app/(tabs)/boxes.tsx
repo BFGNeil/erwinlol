@@ -28,6 +28,19 @@ export default function Boxes() {
 
   useEffect(() => {
     getWalletBoxes().then((data) => {
+      //sort data by opened_at, newest first
+      data.boxes.sort((a, b) => {
+        if (a.opened_at > b.opened_at) {
+          return -1;
+        }
+        if (a.opened_at < b.opened_at) {
+          return 1;
+        }
+        return 0;
+      });
+
+      console.log(data);
+
       setWalletBoxes(data);
       setLastUpdated(new Date());
     });

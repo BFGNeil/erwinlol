@@ -27,5 +27,16 @@ export default async function getWalletBoxes() {
       )
     };
 
+    //sort by opened_at, newest first
+    walletBoxes.boxes.sort((a, b) => {
+      if (a.opened_at > b.opened_at) {
+        return -1;
+      }
+      if (a.opened_at < b.opened_at) {
+        return 1;
+      }
+      return 0;
+    });
+
     return walletBoxes;
   }
