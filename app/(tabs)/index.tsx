@@ -126,7 +126,7 @@ export default function HomeScreen() {
       }
     >
       <ThemedView>
-        <ThemedText type="title">Wallet Stats</ThemedText>
+        <ThemedText type="title">🪙 Wallet Stats</ThemedText>
         <ThemedText>
           Last Updated: {lastUpdated?.toLocaleTimeString()}
         </ThemedText>
@@ -168,7 +168,7 @@ export default function HomeScreen() {
       <ThemedView style={styles.statsContainer}>
         <View style={styles.grid}>
           <ThemedText type="title" style={{ marginBottom: 8 }}>
-            Current Box
+            📦 Current Box
           </ThemedText>
           <CurrentBox />
         </View>

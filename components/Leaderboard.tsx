@@ -61,7 +61,10 @@ export default function Leaderboard() {
   return (
     <View>
       <ThemedText type="title" style={{ marginBottom: 8 }}>
-        Leaderboard
+        🏆 Leaderboard
+      </ThemedText>
+      <ThemedText type="subtitle" style={{ marginBottom: 8 }}>
+        Total Contributors: {rankings?.total}
       </ThemedText>
       <View style={styles.grid}>
         {rankings &&
