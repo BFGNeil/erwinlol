@@ -7,15 +7,18 @@ import TrimmedText from "./trimmedText";
 export default function Leaderboard() {
   const themeColor = useColorScheme();
 
-  const [rankings, setRankings] = useState<Rankings[] | null>(null); // Add the Rankings interfac
+  const [rankings, setRankings] = useState<Rankings | null>(null); // Add the Rankings interfac
 
   interface Rankings {
-    wallet_id: string;
-    guess_count: number;
-    open_count: number;
-    burn_count: number;
-    contribution_count: number;
-    tokens_earned: number;
+    total: number;
+    contributors: {
+      burn_count: number;
+      contribution_count: number;
+      guess_count: number;
+      open_count: number;
+      tokens_earned: number;
+      wallet_id: string;
+    }[];
   }
 
   useEffect(() => {
@@ -62,7 +65,8 @@ export default function Leaderboard() {
       </ThemedText>
       <View style={styles.grid}>
         {rankings &&
-          rankings.map((ranking, index) => (
+          rankings.contributors.length && // Check if rankings is not null and has at least one item
+          rankings.contributors.map((ranking, index) => (
             <View style={styles.gridLeaderboardItem} key={index}>
               {index === 0 && <ThemedText>🥇</ThemedText>}
               {index === 1 && <ThemedText>🥈</ThemedText>}

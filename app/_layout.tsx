@@ -1,16 +1,20 @@
-import { DarkTheme, DefaultTheme, ThemeProvider, } from '@react-navigation/native';
-import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
-import * as SplashScreen from 'expo-splash-screen';
-import { useEffect, useRef, useState } from 'react';
-import 'react-native-reanimated';
-import * as Notifications from 'expo-notifications';
-import { Platform } from 'react-native';
-import * as SecureStore from 'expo-secure-store';
+import {
+  DarkTheme,
+  DefaultTheme,
+  ThemeProvider,
+} from "@react-navigation/native";
+import { useFonts } from "expo-font";
+import { Stack } from "expo-router";
+import * as SplashScreen from "expo-splash-screen";
+import { useEffect, useRef, useState } from "react";
+import "react-native-reanimated";
+import * as Notifications from "expo-notifications";
+import { Platform } from "react-native";
+import * as SecureStore from "expo-secure-store";
 
-import { useColorScheme } from '@/hooks/useColorScheme';
-import CollectWallet from '@/components/collectWallet';
-import registerForPushNotificationsAsync from '@/hooks/registerForPushNotificationsAsync';
+import { useColorScheme } from "@/hooks/useColorScheme";
+import CollectWallet from "@/components/collectWallet";
+import registerForPushNotificationsAsync from "@/hooks/registerForPushNotificationsAsync";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -26,7 +30,7 @@ Notifications.setNotificationHandler({
 export default function RootLayout() {
   const colorScheme = useColorScheme();
   const [loaded] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
+    SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
   });
 
   useEffect(() => {
@@ -37,16 +41,19 @@ export default function RootLayout() {
 
   const [walletID, setWalletID] = useState<string | undefined>(undefined);
 
-  const [expoPushToken, setExpoPushToken] = useState('');
-  const [channels, setChannels] = useState<Notifications.NotificationChannel[]>([]);
-  const [notification, setNotification] = useState<Notifications.Notification | undefined>(
-    undefined
+  const [expoPushToken, setExpoPushToken] = useState("");
+  const [channels, setChannels] = useState<Notifications.NotificationChannel[]>(
+    []
   );
+  const [notification, setNotification] = useState<
+    Notifications.Notification | undefined
+  >(undefined);
   const notificationListener = useRef<Notifications.Subscription>();
   const responseListener = useRef<Notifications.Subscription>();
 
   const themeColor = useColorScheme();
 
+  /*
   useEffect(() => {
     registerForPushNotificationsAsync().then(token => setExpoPushToken(token));
 
@@ -68,10 +75,11 @@ export default function RootLayout() {
         Notifications.removeNotificationSubscription(responseListener.current);
     };
   }, []);
+*/
 
   useEffect(() => {
     //try and get walletID from secure store
-    SecureStore.getItemAsync('walletID').then((value) => {
+    SecureStore.getItemAsync("walletID").then((value) => {
       if (value) {
         setWalletID(value);
       }
@@ -83,7 +91,7 @@ export default function RootLayout() {
   }
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+    <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
       {!walletID ? (
         <CollectWallet setWalletID={setWalletID} />
       ) : (
@@ -95,4 +103,3 @@ export default function RootLayout() {
     </ThemeProvider>
   );
 }
-
